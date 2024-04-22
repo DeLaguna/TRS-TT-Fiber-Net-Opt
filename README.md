@@ -1,4 +1,4 @@
-# TRS-TT-Fiber-Net-Opt
+# TRS-TT-Fiber-NetOpt
 MUST BE RUN AS ADMINISTRATOR
 
 Win11 Network Settings Optimizer for 1gb and higher networks  (WIP)
