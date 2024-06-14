@@ -6,7 +6,7 @@
 
 
     Write-Host "==============================================================================="
-    $backupFile = "$tempFolder\TRS-TT-NetOpt-$Status-tweaks-backup-Interfaces-$timestamp.reg" 
+    $backupFile = "$ScriptFolder\TRS-TT-NetOpt-$Status-tweaks-backup-Interfaces-$timestamp.reg" 
     Write-Host "Backing up $backupFile..." -ForegroundColor Yellow
     reg export "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces" $backupFile 
     if (Test-Path $backupFile) {

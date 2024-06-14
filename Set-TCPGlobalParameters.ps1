@@ -27,3 +27,4 @@
 
     ipconfig /flushdns
     Write-Host "Flushed DNS" 
+    }

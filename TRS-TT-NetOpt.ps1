@@ -1,10 +1,12 @@
-﻿# Start Log
-Start-Transcript -Path $Logfile
-
-# Set execution policy
-Set-ExecutionPolicy Unrestricted -Force 
-
+﻿# Define the local script directory
+$localScriptDir = $PSScriptRoot
 $ScriptFolder = $PSScriptRoot
+
+# Define the logfile path
+$Logfile = "$ScriptFolder\logfile-$timestamp.txt"
+
+# Start Log
+Start-Transcript -Path $Logfile
 
 # Define the base URL for your GitHub repository
 $TRSUsername = "https://raw.githubusercontent.com/DeLaguna/"
@@ -12,10 +14,23 @@ $TRSRepo = "TRS-TT-Fiber-NetOpt/"
 $GitHubBase = $TRSUsername + $TRSRepo
 
 # Define a list of script names
-$scriptNames = @("Kill-Process.ps1", "Run-SpeedTest.ps1", "Backup-Registry.ps1", "Insults.ps1", "UserPrompt.ps1","Optimize-NetworkSettings.ps1","Set-TCPGlobalParameters.ps1","Set-LSOSettings.ps1")
+$scriptNames = @("Kill-Process.ps1", 
+                 "Run-SpeedTest.ps1", 
+                 "Backup-Registry.ps1", 
+                 "Insults.ps1", 
+                 "UserPrompt.ps1",
+                 "Optimize-NetworkSettings.ps1",
+                 "Set-TCPGlobalParameters.ps1",
+                 "Get-CurrentSettings.ps1",
+                 "AdditionalOptimizations.ps1",
+                 "Adjust-StartupDelay.ps1",
+                 "Run-DiskCleanup",
+                 "Compare-Settings",
+                 "",
+                 ""
+                 )
 
-# Define the local script directory
-$localScriptDir = $PSScriptRoot
+
 
 # Loop through the list and load each script
 foreach ($scriptName in $scriptNames) {
@@ -37,9 +52,6 @@ foreach ($scriptName in $scriptNames) {
         Invoke-Expression (Invoke-RestMethod ($GitHubBase + $scriptName))
     }
 }
-
-# Load the UserPrompt function from your GitHub repository
-Invoke-Expression (Invoke-RestMethod ($GitHubBase + "UserPrompt.ps1"))
 
 # Ask the user if they wish to create a restore point using a Windows form
 $response = UserPrompt -Message "Do you wish to Create a Restore point?" -Title "Restore Point Prompt"
@@ -65,10 +77,6 @@ Backup-Registry -Status "Before"
 $randomInsult = InsultUser
 Write-Host $randomInsult
 
-# Ask the user a question using a Windows form and print the response
-# $response = UserPrompt -Message "Do you want to restart now?" -Title "Restart Prompt"
-# Write-Host $response
-
 # Call the function in your script
 Optimize-NetworkSettings
 
@@ -76,8 +84,33 @@ AdditionalOptimizations
  
 Set-TCPGlobalParameters
 
-Set-LSOSettings
-
 Adjust-StartupDelay
 
 Run-DiskCleanup
+
+# Compare old and new settings
+Compare-Settings
+
+# Pause to insult user
+InsultUserNpause
+
+# Run speed test after optimization
+Run-SpeedTest -TestTime 'After'
+
+# Get current settings
+$newTcpAckFrequency = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces").TcpAckFrequency
+$newTCPNoDelay = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces").TCPNoDelay
+$newTcpDelAckTicks = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces").TcpDelAckTicks
+$newSystemResponsiveness = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile").SystemResponsiveness
+$newAutoTuningLevel = (netsh int tcp show global).Split("`n") | Where-Object { $_ -match "Receive Window Auto-Tuning Level" }
+$newTimestamps = (netsh int tcp show global).Split("`n") | Where-Object { $_ -match "Timestamps" }
+
+Write-Host ""
+Write-Host "===============================================" -ForegroundColor Green
+Write-Host "Settings Comparison:"
+Write-Output "TcpAckFrequency:      Old: $oldTcpAckFrequency                                                                      New: $newTcpAckFrequency"
+Write-Output "TCPNoDelay:           Old: $oldTCPNoDelay                                                                      New: $newTCPNoDelay"
+Write-Output "TcpDelAckTicks:       Old: $oldTcpDelAckTicks                                                                      New: $newTcpDelAckTicks"
+Write-Output "SystemResponsiveness: Old: $oldSystemResponsiveness                                                                     New: $newSystemResponsiveness"
+
+#EOS

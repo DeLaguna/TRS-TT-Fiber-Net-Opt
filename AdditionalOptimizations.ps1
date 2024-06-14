@@ -18,3 +18,4 @@
         Write-Host "Enable-NetAdapterRsc executed successfully" -ForegroundColor Green
     } catch {
         Write-Host "Enable-NetAdapterRsc is not supported on this system." -ForegroundColor Red
+        }

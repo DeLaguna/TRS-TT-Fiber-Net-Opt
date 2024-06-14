@@ -6,7 +6,21 @@
     )
 
     # Define the path to the speedtest CLI
-    $speedtestPath = "Path\to\your\speedtest\cli"
+    $speedtestPath = "$ScriptFolder\speedtest\cli"
+
+    # Check if the speedtest CLI exists
+    if (!(Test-Path -Path $speedtestPath)) {
+        # If the speedtest CLI does not exist, download it
+        $speedtestUrl = "https://install.speedtest.net/app/cli/ookla-speedtest-1.0.0-win64.zip"
+        $speedtestZipPath = "$ScriptFolder\speedtest\cli.zip"
+        Invoke-WebRequest -Uri $speedtestUrl -OutFile $speedtestZipPath
+
+        # Extract the downloaded zip file
+        Expand-Archive -Path $speedtestZipPath -DestinationPath $ScriptFolder\speedtest
+
+        # Remove the downloaded zip file
+        Remove-Item -Path $speedtestZipPath
+    }
 
     Write-Host "Running speed test $TestTime optimization..." -ForegroundColor Yellow
 
